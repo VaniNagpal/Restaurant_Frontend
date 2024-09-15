@@ -1,4 +1,5 @@
 
+
 import React from 'react'
 import { Route, Routes } from 'react-router-dom';
 import './App.css';
@@ -10,6 +11,8 @@ import SignupPage from './pages/SignupPage';
 import Home from './pages/Home';
 
 import CartPage from './pages/CartPage';
+import SuccessRedirect from './components/SuccessRedirect';
+import History from './pages/History.js';
 const App = () => {
   return (
     <div>
@@ -18,6 +21,9 @@ const App = () => {
         <Route path='/login' element={<Login />} />
        <Route path='/signup' element={<SignupPage />} />
        <Route path='/cart' element={<CartPage />} />
+       < Route path='/success' element={<SuccessRedirect />} />
+       < Route path='/history' element={<History />} />
+      
          <Route path='/app' element={<Home />} />
         <Route path='app/:restaurant_id' element={<RestaurantPage />} /> 
       </Routes>

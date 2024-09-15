@@ -1,4 +1,5 @@
 
+
 const initialState = {
     name: '',
     email: '',
@@ -16,6 +17,7 @@ function userReducer(state = { initialState }, action) {
                 ...state,
                 name: action.payload.name,
                 email: action.payload.email,
+
                 username: action.payload.username,
                 image: action.payload.image,
                 orderHistory: action.payload.orderHistory,
@@ -24,6 +26,13 @@ function userReducer(state = { initialState }, action) {
             }
         case 'GET_USER':
             return state;
+         case 'LOG_IN':
+            return{
+            ...state,
+            isLoggedIn:true
+            }  
+         case 'LOG_OUT':
+                return initialState;
         default:
             return state;
     }

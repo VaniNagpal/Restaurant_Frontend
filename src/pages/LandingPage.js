@@ -1,5 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import Crousel from '../components/Crousel';
 
 const LandingPage = () => {
   return (
@@ -9,14 +10,14 @@ const LandingPage = () => {
 
 
 
-      <section className="bg-[url('https://images.indianexpress.com/2023/12/food.jpg')] text-white flex flex-col items-center justify-center text-center py-20">
+      {/* <section className="bg-[url('https://images.indianexpress.com/2023/12/food.jpg')] text-white flex flex-col items-center justify-center text-center py-20">
         <h1 className="text-4xl font-bold mb-4">Welcome to <span className="text-yellow-400">BiteBurst!</span></h1>
         <p className="text-xl mb-8">Your favorite meals delivered right to your doorsteps.</p>
         <NavLink to="/signup" className="bg-yellow-500 text-gray-800 px-6 py-3 rounded-lg text-lg font-semibold hover:bg-yellow-600">
           Get Started
         </NavLink>
-      </section>
-
+      </section> */}
+      <Crousel/>
       
       <section className="py-16 bg-white">
         <div className="container mx-auto text-center">

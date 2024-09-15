@@ -1,15 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import axios from '../utils/axios'; // Ensure this is pointing to your axios instance
+import { loadStripe } from '@stripe/stripe-js';
+import { Elements, useStripe, useElements } from '@stripe/react-stripe-js';
+
+// Initialize Stripe outside of a component’s render to avoid recreating the `stripe` object on every render.
+const stripePromise = loadStripe(process.env.REACT_APP_STRIPE_PUBLIC_KEY);
 
 const CartPage = () => {
     const [cartItems, setCartItems] = useState([]);
     const [loading, setLoading] = useState(true);
+    const stripe = useStripe(); // Access Stripe instance
+    const elements = useElements(); // Access Elements instance
 
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
                 const response = await axios.get('http://localhost:4444/restaurant/view-cart');
-                console.log(response);
                 setCartItems(response?.data?.data || []); // Adjust based on your response structure
                 setLoading(false);
             } catch (error) {
@@ -21,11 +27,22 @@ const CartPage = () => {
         fetchCartItems();
     }, []);
 
-    const handleQuantityChange = async (itemId, newQuantity) => {
+    const handleQuantityIncrease = async (itemId) => {
         try {
-            await axios.patch(`/cart/${itemId}`, { quantity: newQuantity });
+            await axios.get(`http://localhost:4444/restaurant/increase-cart/${itemId}`);
             // Refresh cart items
-            const response = await axios.get('/cart');
+            const response = await axios.get('http://localhost:4444/restaurant/view-cart');
+            setCartItems(response.data.data);
+        } catch (error) {
+            console.error('Error updating cart item quantity:', error);
+        }
+    };
+
+    const handleQuantityDecrease = async (itemId) => {
+        try {
+            await axios.get(`http://localhost:4444/restaurant/decrease-cart/${itemId}`);
+            // Refresh cart items
+            const response = await axios.get('http://localhost:4444/restaurant/view-cart');
             setCartItems(response.data.data);
         } catch (error) {
             console.error('Error updating cart item quantity:', error);
@@ -34,12 +51,38 @@ const CartPage = () => {
 
     const handleRemoveItem = async (itemId) => {
         try {
-            await axios.delete(`/cart/${itemId}`);
+            await axios.get(`http://localhost:4444/restaurant/delete-cart-item/${itemId}`);
             // Refresh cart items
-            const response = await axios.get('/cart');
+            const response = await axios.get('http://localhost:4444/restaurant/view-cart');
             setCartItems(response.data.data);
         } catch (error) {
             console.error('Error removing cart item:', error);
+        }
+    };
+
+    const calculateTotalBill = () => {
+        return cartItems.reduce((total, item) => total + item.totalPrice, 0).toFixed(2);
+    };
+
+    const handleBuyNow = async () => {
+       
+        try {
+            const response = await axios.post('http://localhost:4444/create-checkout-session', {
+                items: cartItems.map((item) => ({
+                    price: item.food.price, // Add correct price field
+                    quantity: item.quantity,
+                })),
+            });
+
+            const sessionId = response.data.id;
+            const result = await stripe.redirectToCheckout({ sessionId });
+            
+            
+            if (result.error) {
+                console.error('Stripe checkout error:', result.error);
+            }
+        } catch (error) {
+            console.error('Error creating checkout session:', error);
         }
     };
 
@@ -59,10 +102,10 @@ const CartPage = () => {
                                 <div className="flex-1 ml-4">
                                     <h2 className="text-xl font-semibold">{item.food.name}</h2>
                                     <p className="text-gray-600">{item.food.description}</p>
-                                    <p className="text-lg font-bold">Price: ${item.food.price}</p>
+                                    <p className="text-lg font-bold">Price: ${item.totalPrice}</p>
                                     <div className="flex items-center mt-2">
                                         <button
-                                            onClick={() => handleQuantityChange(item._id, item.quantity - 1)}
+                                            onClick={() => handleQuantityDecrease(item._id)}
                                             disabled={item.quantity <= 1}
                                             className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                                         >
@@ -70,7 +113,7 @@ const CartPage = () => {
                                         </button>
                                         <span className="mx-2">{item.quantity}</span>
                                         <button
-                                            onClick={() => handleQuantityChange(item._id, item.quantity + 1)}
+                                            onClick={() => handleQuantityIncrease(item._id)}
                                             className="px-3 py-1 bg-blue-500 text-white rounded-md hover:bg-blue-600"
                                         >
                                             +
@@ -86,10 +129,27 @@ const CartPage = () => {
                             </div>
                         )
                     ))}
+                    <div className="mt-4 flex justify-between items-center font-bold">
+                        <span>Total Bill:</span>
+                        <span>${calculateTotalBill()}</span>
+                    </div>
+                    <button
+                        onClick={handleBuyNow}
+                        className="mt-4 px-6 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+                    >
+                        Buy Now
+                    </button>
                 </div>
             )}
         </div>
     );
 };
 
-export default CartPage;
+// Wrap CartPage with Elements to provide Stripe context
+const WrappedCartPage = () => (
+    <Elements stripe={stripePromise}>
+        <CartPage />
+    </Elements>
+);
+
+export default WrappedCartPage;
