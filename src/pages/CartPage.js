@@ -15,7 +15,7 @@ const CartPage = () => {
     useEffect(() => {
         const fetchCartItems = async () => {
             try {
-                const response = await axios.get('http://localhost:4444/restaurant/view-cart');
+                const response = await axios.get('/restaurant/view-cart');
                 setCartItems(response?.data?.data || []); // Adjust based on your response structure
                 setLoading(false);
             } catch (error) {
@@ -29,9 +29,9 @@ const CartPage = () => {
 
     const handleQuantityIncrease = async (itemId) => {
         try {
-            await axios.get(`http://localhost:4444/restaurant/increase-cart/${itemId}`);
+            await axios.get(`/restaurant/increase-cart/${itemId}`);
             // Refresh cart items
-            const response = await axios.get('http://localhost:4444/restaurant/view-cart');
+            const response = await axios.get('/restaurant/view-cart');
             setCartItems(response.data.data);
         } catch (error) {
             console.error('Error updating cart item quantity:', error);
@@ -40,9 +40,9 @@ const CartPage = () => {
 
     const handleQuantityDecrease = async (itemId) => {
         try {
-            await axios.get(`http://localhost:4444/restaurant/decrease-cart/${itemId}`);
+            await axios.get(`/restaurant/decrease-cart/${itemId}`);
             // Refresh cart items
-            const response = await axios.get('http://localhost:4444/restaurant/view-cart');
+            const response = await axios.get('/restaurant/view-cart');
             setCartItems(response.data.data);
         } catch (error) {
             console.error('Error updating cart item quantity:', error);
@@ -51,9 +51,9 @@ const CartPage = () => {
 
     const handleRemoveItem = async (itemId) => {
         try {
-            await axios.get(`http://localhost:4444/restaurant/delete-cart-item/${itemId}`);
+            await axios.get(`/restaurant/delete-cart-item/${itemId}`);
             // Refresh cart items
-            const response = await axios.get('http://localhost:4444/restaurant/view-cart');
+            const response = await axios.get('/restaurant/view-cart');
             setCartItems(response.data.data);
         } catch (error) {
             console.error('Error removing cart item:', error);
@@ -67,7 +67,7 @@ const CartPage = () => {
     const handleBuyNow = async () => {
        
         try {
-            const response = await axios.post('http://localhost:4444/create-checkout-session', {
+            const response = await axios.post('/create-checkout-session', {
                 items: cartItems.map((item) => ({
                     price: item.food.price, // Add correct price field
                     quantity: item.quantity,

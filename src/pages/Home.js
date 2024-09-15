@@ -13,7 +13,7 @@ const Home = () => {
         async function getRestaurantDetails() {
 
             try {
-                let { data } = await axios.get('http://localhost:4444/restaurant/all');
+                let { data } = await axios.get('/restaurant/all');
                 dispatch({ type: "SET_RESTAURANTS", payload: data.restaurants });
                 setIsRestaurantsFetched(true);
             } catch (error) {

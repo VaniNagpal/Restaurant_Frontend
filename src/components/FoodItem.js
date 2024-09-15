@@ -8,7 +8,7 @@ const FoodItem = ({ food, category, restaurantName }) => {
     const dispatch = useDispatch();
     const addToCartHandler = async (id, category, restaurantName) => {
         try {
-            const { data } = await axios.get(`http://localhost:4444/restaurant/add-cart/${id}?category=${category}&restaurant_name=${restaurantName}`)
+            const { data } = await axios.get(`/restaurant/add-cart/${id}?category=${category}&restaurant_name=${restaurantName}`)
             console.log(data);
             dispatch({ type: 'ADD_TO_CART', payload: data })
             swal ( "Item added to cart" );

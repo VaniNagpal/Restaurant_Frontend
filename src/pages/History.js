@@ -10,7 +10,7 @@ const OrderHistory = () => {
     const fetchOrderHistory = async () => {
       try {
         // Fetch order history from the backend
-        const response = await axios.get('http://localhost:4444/getorderhistory', {
+        const response = await axios.get('/getorderhistory', {
           withCredentials: true // Ensure cookies are sent with the request
         });
         setOrders(response.data.user.orderHistory);

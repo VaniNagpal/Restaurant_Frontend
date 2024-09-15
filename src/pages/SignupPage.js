@@ -40,7 +40,7 @@ const Signup = () => {
 
         try {
             // Send a POST request to the signup endpoint
-            const response = await axios.post('http://localhost:4444/user/signup', data, {
+            const response = await axios.post('/user/signup', data, {
                 headers: { 'Content-Type': 'multipart/form-data' }
             });
 

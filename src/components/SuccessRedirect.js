@@ -21,7 +21,7 @@ const SuccessRedirect = () => {
 
                 try {
                     // Send a request to the backend to clear the cart and update the order history
-                    await axios.post('http://localhost:4444/checkout-success', { userId });
+                    await axios.post('/checkout-success', { userId });
 
                     // Redirect to the order history page after success
                     navigate('/history');

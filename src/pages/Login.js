@@ -16,7 +16,7 @@ const Login = () => {
         if (!password) return alert('Please enter password');
 
         try {
-            const {data} = await axios.post('http://localhost:4444/user/login', { username, password });
+            const {data} = await axios.post('/user/login', { username, password });
             console.log(data);
             // SET THE DATA TO REDUX
             dispatch({ type: 'SET_USER', payload: data.user })
